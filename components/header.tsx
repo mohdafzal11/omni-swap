@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
@@ -127,52 +128,10 @@ export default function Header() {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={openNetwork} onOpenChange={setOpenNetwork}>
-            <DialogTrigger asChild>
-              <Button
-                variant="secondary"
-                className="rounded-full px-4 text-sm h-10"
-              >
-                Select Network{" "}
-                <span> {openNetwork ? <ChevronUp /> : <ChevronDown />}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-background/95 text-foreground border-border rounded-2xl shadow-xl p-6">
-              <DialogHeader>
-                <DialogTitle className="text-lg sm:text-xl font-semibold text-center">
-                  Select a Network
-                </DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col gap-1 sm:gap-2 mt-3 sm:mt-4">
-                {[
-                  "BNB Chain",
-                  "Ethereum",
-                  "Solana",
-                  "Aptos",
-                  "Base",
-                  "Arbitrum One",
-                  "ZKsync Era",
-                  "Linea",
-                  "opBNB",
-                  "Polygon zkEVM",
-                  "Monad Testnet",
-                ].map((net) => (
-                  <Button
-                    key={net}
-                    variant="ghost"
-                    className="justify-start rounded-lg hover:bg-accent/50 py-1 sm:py-2 text-sm sm:text-base font-medium transition-colors"
-                    onClick={() => setOpenNetwork(false)}
-                  >
-                    {net}
-                  </Button>
-                ))}
-              </div>
-            </DialogContent>
-          </Dialog>
+          {/* <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10">
+          </Button> */}
+          <ConnectButton />
 
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10">
-            Connect Wallet
-          </Button>
         </motion.div>
       </div>
 
@@ -229,12 +188,7 @@ export default function Header() {
                 </DialogTrigger>
               </Dialog>
 
-              <Button
-                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-sm h-10"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Connect Wallet
-              </Button>
+             <ConnectButton/>
             </div>
           </motion.div>
         )}
