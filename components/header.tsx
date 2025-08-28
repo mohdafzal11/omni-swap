@@ -9,6 +9,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Logo from "./logo";
@@ -24,12 +25,20 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import useWallet from "@/hooks/useWallet";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const [openNetwork, setOpenNetwork] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
+  const { address, isConnected, caipAddress, status, embeddedWalletInfo, connectWallet , disconnectWallet } = useWallet();
+
+  const handleLogout = () => {
+    disconnectWallet();
+    setIsAddressDropdownOpen(false)
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
@@ -170,9 +179,43 @@ export default function Header() {
             </DialogContent>
           </Dialog>
 
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10">
-            Connect Wallet
-          </Button>
+          {!isConnected ? (
+            <Button
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10"
+              onClick={connectWallet}
+            >
+              <Wallet className="h-4 w-4" />
+              Connect Wallet
+            </Button>
+          ) : (
+            <div className="wallet-dropdown relative">
+              <div
+                className="flex items-center gap-2 text-lg cursor-pointer"
+                onClick={() => setIsAddressDropdownOpen(!isAddressDropdownOpen)}
+              >
+                <Wallet className="h-4 w-4" />
+                <span>
+                  {address && address.substring(0, 6)! + "..." + address.substring(address.length - 4)!}
+                </span>
+              </div>
+              {isAddressDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={() => navigator.clipboard.writeText(address!)}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
+                  >
+                    Copy Address
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-accent transition-colors"
+                  >
+                    Logout 
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </motion.div>
       </div>
 
@@ -231,7 +274,7 @@ export default function Header() {
 
               <Button
                 className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full text-sm h-10"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={connectWallet}
               >
                 Connect Wallet
               </Button>
@@ -241,4 +284,4 @@ export default function Header() {
       </AnimatePresence>
     </header>
   );
-}
+} 

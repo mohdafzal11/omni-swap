@@ -22,6 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import useWallet from "@/hooks/useWallet";
 
 type Token = {
   symbol: string;
@@ -37,7 +38,12 @@ type TokenModalProps = {
   selectedToken: Token;
 };
 
-const TokenModal = ({ onSelect, title, tokens, selectedToken }: TokenModalProps) => {
+const TokenModal = ({
+  onSelect,
+  title,
+  tokens,
+  selectedToken,
+}: TokenModalProps) => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const [searchTerm, setSearchTerm] = useState("");
@@ -107,6 +113,14 @@ const TokenModal = ({ onSelect, title, tokens, selectedToken }: TokenModalProps)
 export default function Home() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const {
+    address,
+    isConnected,
+    caipAddress,
+    status,
+    embeddedWalletInfo,
+    connectWallet,
+  } = useWallet();
 
   const [fromToken, setFromToken] = useState<Token>({
     symbol: "ETH",
@@ -242,7 +256,9 @@ export default function Home() {
                     onChange={(e) => setEnableTrade(e.target.checked)}
                     className="mr-2"
                   />
-                  <span className="text-sm">Trade and Send to Another Address</span>
+                  <span className="text-sm">
+                    Trade and Send to Another Address
+                  </span>
                 </div>
                 <button
                   onClick={() => setShowRouting(!showRouting)}
@@ -303,9 +319,15 @@ export default function Home() {
               </AnimatePresence>
             </div>
 
-            <Button className="w-full rounded-xl font-semibold text-lg py-5 sm:py-6 bg-primary text-primary-foreground">
-              Connect Wallet
-            </Button>
+            {!isConnected ? (
+              <Button className="w-full rounded-xl font-semibold text-lg py-5 sm:py-6 bg-primary text-primary-foreground">
+                Connect Wallet
+              </Button>
+            ) : (
+              <Button className="w-full rounded-xl font-semibold text-lg py-5 sm:py-6 bg-primary text-primary-foreground">
+                Confirm Trade
+              </Button>
+            )}
           </CardContent>
         </Card>
       </motion.div>
