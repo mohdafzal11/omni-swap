@@ -24,13 +24,34 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+import { useDynamicContext} from "@dynamic-labs/sdk-react-core";
+import { useWalletOptions } from "@dynamic-labs/sdk-react-core";
+
+// component setup etc.
+
+
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
   const [openNetwork, setOpenNetwork] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { setShowAuthFlow , user  } = useDynamicContext();
+    const { selectWalletOption } = useWalletOptions();
+
+  
+    console.log("User" , user)
+
+  const handleConnectWallet = () =>{
+    console.log("Connect Wallet")
+    setShowAuthFlow(true)
+  }
+
+  
+const connectWithWallet = async () => {
+  return await selectWalletOption("metamask")
+}
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
@@ -128,10 +149,14 @@ export default function Header() {
             </DialogContent>
           </Dialog>
 
-          {/* <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10">
-          </Button> */}
-          <ConnectButton />
-
+          {/* <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10"
+            onClick={() => handleConnectWallet()}>
+             Connect Wallet
+           </Button>  */}
+           <button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 text-sm h-10"
+            onClick={() => connectWithWallet()}>
+             Connect Wallet
+           </button> 
         </motion.div>
       </div>
 
@@ -188,7 +213,7 @@ export default function Header() {
                 </DialogTrigger>
               </Dialog>
 
-             <ConnectButton/>
+             <DynamicWidget/>
             </div>
           </motion.div>
         )}

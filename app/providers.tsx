@@ -1,70 +1,59 @@
 "use client";
 
-import type React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
 import {
-  RainbowKitProvider,
-  darkTheme,
-  lightTheme,
-} from "@rainbow-me/rainbowkit";
-import "@rainbow-me/rainbowkit/styles.css";
-import { useTheme } from "next-themes";
+  DynamicContextProvider,
+  FilterChain,
+} from "@dynamic-labs/sdk-react-core";
+import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
+import { SolanaWalletConnectors } from "@dynamic-labs/solana";
+import {
+  BitcoinIcon,
+  EthereumIcon,
+  FlowIcon,
+  SolanaIcon,
+} from "@dynamic-labs/iconic";
 
-import { config } from "../wagmi";
-
-const queryClient = new QueryClient();
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme();
-
-  const customDark = {
-    ...darkTheme({
-      accentColor: "#6366f1",
-      accentColorForeground: "white",
-      borderRadius: "large",
-    }),
-    colors: {
-      ...darkTheme({
-        accentColor: "#6366f1",
-        accentColorForeground: "white",
-        borderRadius: "large",
-      }).colors,
-      modalBackground: "#1d2438", 
-      modalBorder: "#1e293b",    
-      modalText: "#ffffff",
-    },
-  };
-
-  const customLight = {
-    ...lightTheme({
-      accentColor: "#1d4ed8",
-      accentColorForeground: "white",
-      borderRadius: "large",
-    }),
-    colors: {
-      ...lightTheme({
-        accentColor: "#1d4ed8",
-        accentColorForeground: "white",
-        borderRadius: "large",
-      }).colors,
-      modalBackground: "#ffffff", 
-      modalBorder: "#e2e8f0",
-      modalText: "#0f172a",
-    },
-  };
+export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          modalSize="wide"
-          theme={theme === "dark" ? customDark : customLight}
-        >
-          {children}
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <DynamicContextProvider
+      settings={{
+        environmentId: "8d795db9-e733-47a1-936d-c163cd24e624",
+        walletConnectors: [EthereumWalletConnectors, SolanaWalletConnectors],
+        initialAuthenticationMode: "connect-only",
+        overrides: {
+          views: [
+            {
+              type: "wallet-list",
+              tabs: {
+                items: [
+                  {
+                    label: { text: "All chains" },
+                  },
+                  {
+                    label: { icon: <EthereumIcon /> },
+                    walletsFilter: FilterChain("EVM"),
+                    recommendedWallets: [{ walletKey: "phantomevm" }],
+                  },
+                  {
+                    label: { icon: <SolanaIcon /> },
+                    walletsFilter: FilterChain("SOL"),
+                  },
+                  {
+                    label: { icon: <BitcoinIcon /> },
+                    walletsFilter: FilterChain("BTC"),
+                  },
+                  {
+                    label: { icon: <FlowIcon /> },
+                    walletsFilter: FilterChain("FLOW"),
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      }}
+    >
+      {children}
+    </DynamicContextProvider>
   );
 }
-
-export default Providers;
