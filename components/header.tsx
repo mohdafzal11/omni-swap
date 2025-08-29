@@ -29,7 +29,6 @@ import useWallet from "@/hooks/useWallet";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
-  const [openNetwork, setOpenNetwork] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
@@ -136,48 +135,6 @@ export default function Header() {
             </DialogContent>
           </Dialog>
 
-          <Dialog open={openNetwork} onOpenChange={setOpenNetwork}>
-            <DialogTrigger asChild>
-              <Button
-                variant="secondary"
-                className="rounded-full px-4 text-sm h-10"
-              >
-                Select Network{" "}
-                <span> {openNetwork ? <ChevronUp /> : <ChevronDown />}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md bg-background/95 text-foreground border-border rounded-2xl shadow-xl p-6">
-              <DialogHeader>
-                <DialogTitle className="text-lg sm:text-xl font-semibold text-center">
-                  Select a Network
-                </DialogTitle>
-              </DialogHeader>
-              <div className="flex flex-col gap-1 sm:gap-2 mt-3 sm:mt-4">
-                {[
-                  "BNB Chain",
-                  "Ethereum",
-                  "Solana",
-                  "Aptos",
-                  "Base",
-                  "Arbitrum One",
-                  "ZKsync Era",
-                  "Linea",
-                  "opBNB",
-                  "Polygon zkEVM",
-                  "Monad Testnet",
-                ].map((net) => (
-                  <Button
-                    key={net}
-                    variant="ghost"
-                    className="justify-start rounded-lg hover:bg-accent/50 py-1 sm:py-2 text-sm sm:text-base font-medium transition-colors"
-                    onClick={() => setOpenNetwork(false)}
-                  >
-                    {net}
-                  </Button>
-                ))}
-              </div>
-            </DialogContent>
-          </Dialog>
 
           {!isConnected ? (
             <Button
@@ -253,21 +210,6 @@ export default function Header() {
                   >
                     <Settings className="h-5 w-5" />
                     Settings
-                  </Button>
-                </DialogTrigger>
-              </Dialog>
-
-              <Dialog open={openNetwork} onOpenChange={setOpenNetwork}>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center justify-start gap-2 text-sm h-10"
-                  >
-                    <span>Select Network</span>
-                    <span>
-                      {" "}
-                      {openNetwork ? <ChevronUp /> : <ChevronDown />}
-                    </span>
                   </Button>
                 </DialogTrigger>
               </Dialog>

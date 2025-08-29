@@ -242,11 +242,6 @@ export default function Home() {
               />
             </div>
 
-            <div className="rounded-xl p-4 flex items-center justify-between bg-muted/50">
-              <div className="text-sm text-yellow-400">+0 POINTS</div>
-              <div className="text-sm text-muted-foreground">ETA: 36s</div>
-            </div>
-
             <div className="rounded-xl p-4 bg-muted">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
