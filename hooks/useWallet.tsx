@@ -2,19 +2,22 @@ import { useState, useEffect } from "react";
 import { useAppKit } from "@reown/appkit/react";
 import { useAppKitAccount, useAppKitBalance } from "@reown/appkit/react";
 import { useDisconnect } from "@reown/appkit/react";
-
-interface Balance {
-  symbol: string;
-  balance: string;
-}
+import {Chain , Token , SelectedToken , Balance} from "../types/token";
+import { CHAINS } from "@/data/chain";
+import { TOKENS } from "@/data/token";
 
 function useWallet() {
-  const { address, isConnected, caipAddress, status, embeddedWalletInfo } =
-    useAppKitAccount();
+  const { address, isConnected, caipAddress, status, embeddedWalletInfo } = useAppKitAccount();
   const { open, close } = useAppKit();
   const { fetchBalance } = useAppKitBalance();
   const { disconnect } = useDisconnect();
-  const [balance, setBalance] = useState<Balance | null>();
+  const [chains, setChain] = useState<Chain[]>(CHAINS || []);
+  const [tokens, setTokens] = useState<Token[]>(TOKENS || []);  
+  const [balance, setBalance] = useState<Balance | null>(null);
+  const [fromChain, setFromChain] = useState<Chain | null>(CHAINS[0]);
+  const [toChain, setToChain] = useState<Chain | null>(CHAINS[1]);
+  const [fromToken , setFromToken] = useState<SelectedToken | null>(TOKENS[0]);
+  const [toToken , setToToken] = useState<SelectedToken | null>(TOKENS[1]);
 
   const connectWallet = async () => {
     try {
@@ -35,7 +38,9 @@ function useWallet() {
   const getBalance = async () => {
     if (isConnected) {
       const response = await fetchBalance();
-      setBalance(response.data);
+      if (response?.data) {
+        setBalance(response.data);
+      }
     }
   };
 
@@ -52,7 +57,17 @@ function useWallet() {
     embeddedWalletInfo,
     connectWallet,
     disconnectWallet,
-    getBalance
+    getBalance,
+    chains,
+    tokens, 
+    fromChain ,
+    setFromChain,
+    toChain,
+    setToChain,
+    fromToken,
+    setFromToken,
+    toToken,
+    setToToken
   };
 }
 

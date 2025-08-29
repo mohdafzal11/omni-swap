@@ -23,19 +23,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useWallet from "@/hooks/useWallet";
-
-type Token = {
-  symbol: string;
-  chain: string;
-  icon: React.ReactNode;
-  balance: string;
-};
+import { Token , SelectedToken } from "../types/token";
 
 type TokenModalProps = {
-  onSelect: (token: Token) => void;
+  onSelect: (token: SelectedToken) => void;
   title: string;
   tokens: Token[];
-  selectedToken: Token;
+  selectedToken: SelectedToken | null;
 };
 
 const TokenModal = ({
@@ -56,8 +50,7 @@ const TokenModal = ({
     <Dialog>
       <DialogTrigger asChild>
         <div className="flex items-center gap-2 font-semibold text-lg cursor-pointer">
-          {selectedToken.icon}
-          <span>{selectedToken.symbol}</span>
+          <span>{selectedToken?.symbol}</span>
           <ChevronDown className="w-4 h-4" />
         </div>
       </DialogTrigger>
@@ -84,16 +77,16 @@ const TokenModal = ({
                   onSelect(token);
                 }}
                 className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer ${
-                  selectedToken.symbol === token.symbol
+                  selectedToken?.symbol === token.symbol
                     ? "bg-muted"
                     : "hover:bg-muted"
                 }`}
               >
-                {token.icon}
+                <img src={token?.logo} alt={token.name} />
                 <div>
                   <div className="font-semibold">{token.symbol}</div>
                   <div className="text-sm text-muted-foreground">
-                    {token.chain}
+                    {token.name}
                   </div>
                 </div>
               </div>
@@ -120,50 +113,20 @@ export default function Home() {
     status,
     embeddedWalletInfo,
     connectWallet,
+    chains,
+    tokens,
+    fromChain,
+    setFromChain,
+    toChain,
+    setToChain ,
+    fromToken,
+    setFromToken,
+    toToken,
+    setToToken
   } = useWallet();
-
-  const [fromToken, setFromToken] = useState<Token>({
-    symbol: "ETH",
-    chain: "Ethereum",
-    icon: <Bitcoin className="w-6 h-6 text-blue-400" />,
-    balance: "0 ETH",
-  });
-  const [toToken, setToToken] = useState<Token>({
-    symbol: "USDC",
-    chain: "Ethereum",
-    icon: <DollarSign className="w-6 h-6 text-green-500" />,
-    balance: "0 USDC",
-  });
 
   const [showRouting, setShowRouting] = useState(true);
   const [enableTrade, setEnableTrade] = useState(false);
-
-  const tokens: Token[] = [
-    {
-      symbol: "ETH",
-      chain: "Ethereum",
-      icon: <Bitcoin className="w-6 h-6 text-blue-400" />,
-      balance: "0 ETH",
-    },
-    {
-      symbol: "BNB",
-      chain: "BNB Chain",
-      icon: <Coins className="w-6 h-6 text-yellow-500" />,
-      balance: "0 BNB",
-    },
-    {
-      symbol: "USDT",
-      chain: "Ethereum",
-      icon: <DollarSign className="w-6 h-6 text-green-500" />,
-      balance: "0 USDT",
-    },
-    {
-      symbol: "USDC",
-      chain: "Ethereum",
-      icon: <DollarSign className="w-6 h-6 text-green-500" />,
-      balance: "0 USDC",
-    },
-  ];
 
   const handleSwap = () => {
     const temp = fromToken;
@@ -191,7 +154,7 @@ export default function Home() {
             <div className="rounded-xl p-4 flex items-center justify-between bg-muted/50">
               <div className="text-sm text-muted-foreground">You pay</div>
               <div className="text-sm text-muted-foreground">
-                Balance: {fromToken.balance}
+                Balance: {fromToken?.amount || 0}
               </div>
             </div>
             <div className="rounded-xl p-4 flex items-center justify-between bg-muted">
@@ -224,7 +187,7 @@ export default function Home() {
             <div className="rounded-xl p-4 flex items-center justify-between bg-muted/50">
               <div className="text-sm text-muted-foreground">You receive</div>
               <div className="text-sm text-muted-foreground">
-                Balance: {toToken.balance}
+                Balance: {toToken?.amount}
               </div>
             </div>
             <div className="rounded-xl p-4 flex items-center justify-between bg-muted">
@@ -280,19 +243,19 @@ export default function Home() {
                     <div className="rounded-xl p-4 flex flex-col gap-3 bg-muted/70">
                       <div className="flex items-center justify-between text-sm font-semibold">
                         <div className="flex items-center gap-2">
-                          {fromToken.icon}
-                          <span>{fromToken.chain.toUpperCase()}</span>
+                         <img src={fromToken?.logo} alt={fromToken?.name} />
+                          <span>{fromToken?.symbol.toUpperCase()}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          {toToken.icon}
-                          <span>{toToken.chain.toUpperCase()}</span>
+                          <img src={fromToken?.logo} alt={fromToken?.name} />
+                          <span>{toToken?.symbol.toUpperCase()}</span>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          {fromToken.icon}
-                          <span className="text-sm">0 {fromToken.symbol}</span>
+                          <img src={fromToken?.logo} alt={fromToken?.name} />
+                          <span className="text-sm">{fromToken?.amount} {fromToken?.symbol}</span>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -304,8 +267,8 @@ export default function Home() {
                         </div>
 
                         <div className="flex items-center gap-2">
-                          {toToken.icon}
-                          <span className="text-sm">0 {toToken.symbol}</span>
+                          <img src={toToken?.logo} alt={toToken?.name} />
+                          <span className="text-sm">{toToken?.amount} {toToken?.symbol}</span>
                         </div>
                       </div>
                     </div>
